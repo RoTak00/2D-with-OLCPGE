@@ -102,6 +102,26 @@ mat3x3 Mat_MakeScale(float k)
     return matZoom;
 }
 
+mat3x3 Mat_MakeIdentity()
+{
+    mat3x3 mat;
+    mat.m[0][0] = 1.0f; mat.m[1][0] = 0.0f; mat.m[2][0] = 0.0f;
+		mat.m[0][1] = 0.0f; mat.m[1][1] = 1.0f; mat.m[2][1] = 0.0f;
+		mat.m[0][2] = 0.0f; mat.m[1][2] = 0.0f; mat.m[2][2] = 1.0f;
+    return mat;
+}
+
+mat3x3 Mat_FlipY()
+{
+    mat3x3 mat;
+    mat.m[0][0] = 1.0f; mat.m[1][0] = 0.0f; mat.m[2][0] = 0.0f;
+		mat.m[0][1] = 0.0f; mat.m[1][1] = -1.0f; mat.m[2][1] = 0.0f;
+		mat.m[0][2] = 0.0f; mat.m[1][2] = 0.0f; mat.m[2][2] = 1.0f;
+        return mat;
+}
+
+
+
 mat3x3 Mat_MakeRotation(float t)
 {
     
