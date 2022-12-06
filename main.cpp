@@ -32,7 +32,7 @@ private:
 	object square;
 
 	mat3x3 matScaleToScreen, matTranslateCamera, matTranslateCameraBack, matZoomScreen, matRotateScreen;
-	mat3x3 matScreenTransform, matFlipY;
+	mat3x3 matScreenTransform, matRotateDirection;
 
 
 	Ball b;
@@ -63,17 +63,19 @@ public:
 
 		
 		
-		//if(GetKey(olc::E).bHeld) fRotation += 1.0f * fElapsedTime;
-		//if(GetKey(olc::Q).bHeld) fRotation -= 1.0f * fElapsedTime;
+		if(GetKey(olc::E).bHeld) fRotation += 1.0f * fElapsedTime;
+		if(GetKey(olc::Q).bHeld) fRotation -= 1.0f * fElapsedTime;
 
+		matRotateDirection = Mat_MakeRotation(-fRotation);
 		
-		//vX = Vec_MultiplyMatrix(vX, matRotateScreen);
-		//vY = Vec_MultiplyMatrix(vY, matRotateScreen);
+		vX = Vec_MultiplyMatrix(vX, matRotateDirection);
+		vY = Vec_MultiplyMatrix(vY, matRotateDirection);
 
 		vec2d vdX, vdY;
 		vdX = Vec_Mul(vX, 1.0f * fElapsedTime / fScale);
 		vdY = Vec_Mul(vY, 1.0f * fElapsedTime / fScale);
-
+		Vec_Print("vx", vX);
+		Vec_Print("vy", vY);
 
 		if(GetKey(olc::A).bHeld) vCamera = Vec_Sub(vCamera, vdX);
 		if(GetKey(olc::D).bHeld) vCamera = Vec_Add(vCamera, vdX);
@@ -82,29 +84,30 @@ public:
 		if(GetKey(olc::UP).bHeld) fScale *= expf(fElapsedTime);
 		if(GetKey(olc::DOWN).bHeld) fScale /= expf(fElapsedTime);
 
-		b.dv = Vec_Mul(b.vel, 1.0f * fElapsedTime);
+		//b.dv = Vec_Mul(b.vel, 1.0f * fElapsedTime);
 
-		b.pos = Vec_Add(b.pos, b.dv);
+		//b.pos = Vec_Add(b.pos, b.dv);
 
 
 
 		// OUTPUT
 		matTranslateCamera = Mat_MakeTranslation(-vCamera.x, -vCamera.y);
 		matZoomScreen = Mat_MakeScale(fScale);
-		matRotateScreen = Mat_MakeRotation(0);
+		matRotateScreen = Mat_MakeRotation(fRotation);
+		
 		
 		matTranslateCameraBack = Mat_MakeTranslation(1.0f, 1.0f);
 
 		
-		for(auto& l: b.mesh->lines)
+		for(auto& l: square.lines)
 		{
 			line lineRealPosition, lineTransformed;
 
-			lineRealPosition.p[0] = Vec_Add(l.p[0], b.pos);
-			lineRealPosition.p[1] = Vec_Add(l.p[1], b.pos);
+			//lineRealPosition.p[0] = Vec_Add(l.p[0], b.pos);
+			//lineRealPosition.p[1] = Vec_Add(l.p[1], b.pos);
 
-			lineTransformed.p[0] = Vec_MultiplyMatrix(lineRealPosition.p[0], matTranslateCamera);
-			lineTransformed.p[1] = Vec_MultiplyMatrix(lineRealPosition.p[1], matTranslateCamera);
+			lineTransformed.p[0] = Vec_MultiplyMatrix(l.p[0], matTranslateCamera);
+			lineTransformed.p[1] = Vec_MultiplyMatrix(l.p[1], matTranslateCamera);
 
 			lineTransformed.p[0] = Vec_MultiplyMatrix(lineTransformed.p[0], matZoomScreen);
 			lineTransformed.p[1] = Vec_MultiplyMatrix(lineTransformed.p[1], matZoomScreen);
